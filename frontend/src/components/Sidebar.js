@@ -1,16 +1,20 @@
+import { Link} from 'react-router-dom';
+
 const Sidebar = () =>{
+  const category_name="Classic novels"
     return (
         <div>
             <div className="d-flex flex-column flex p-4" style={{ fontSize:"14px", textAlign: "left", backgroundColor:"white"}}>
-    <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+    <Link to={`/catalog`} className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
     Categories
-    </a>
+    </Link>
+  
     
     <ul className="nav nav-pills flex-column mb-auto">
       <li className="nav-item">
-        <a href="/" className="nav-link link-dark" >
-          Study books
-        </a>
+      <Link to={`/catalog/category/${category_name}`} className="nav-link link-dark">
+    Classic novels
+    </Link>
       </li>
       <li>
         <a href="/" className="nav-link link-dark">
