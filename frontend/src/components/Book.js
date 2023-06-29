@@ -20,9 +20,10 @@ const Book = (props) => {
        
     <p className="card-text">{props.book.author}. {props.book.published}, {props.book.number_pages} pages </p>    
     <p className="card-text">{props.book.short_desc}</p>
+    <p className="card-text">{props.book.category}</p>
     <div className="d-flex flex-row bd-highlight">
-    <Link to={`/catalog/${props.book._id}`} className="btn btn-primary" style= {{marginRight:"20px", fontSize:"12px"}}>Read more</Link>
-    <Link to={`/catalog/${props.book._id}`} className="btn btn-secondary"style= {{marginRight:"20px", fontSize:"12px"}} >Reserve</Link>
+    <Link to={`/catalog/${props.book._id}`} className="btn btn-primary" style= {{marginRight:"20px", width: "auto", fontSize:"12px"}}>Read more</Link>
+    <Link to={`/catalog/${props.book._id}`} className="btn btn-secondary"style= {{marginRight:"20px", width: "auto", fontSize:"12px"}} >Reserve</Link>
     
     </div>
     </div>

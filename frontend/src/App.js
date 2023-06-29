@@ -9,7 +9,7 @@ import Catalog from './components/Catalog';
 import BookPage from './components/bookPage';
 import CategoryPage from './components/CategoryPage';
 import LoginPage from './components/LoginPage';
-import LogoutPage from './components/logoutPage';
+import SearchResult from './components/SearchResult';
 
 
 
@@ -30,6 +30,8 @@ function App() {
 		request:{},
 		action:""
 	})
+
+	
 	
 	//HELPER FUNCTION
 	
@@ -93,6 +95,7 @@ function App() {
 				getBooks();
 							
 		}, [])
+		
 
 		
 	
@@ -292,8 +295,7 @@ function App() {
 	if(state.error) {
 		message = <h4>{state.error}</h4>
 	}
-	
-	
+		
 	
 	
 	if(state.isLogged) {
@@ -307,8 +309,8 @@ function App() {
 			    <Route path="/" element={<MainPage/>}/>			
 				<Route path="/catalog" element={<Catalog list= {state.list}/>}/>
 				<Route path="/login" element={<LoginPage  register={register} login={login} list= {state.list}/>}/>
-				
 				<Route path="/catalog/:id" element={<BookPage list= {state.list}/>}/>
+				<Route path="/search/:searched" element={<SearchResult list= {state.list}/>}/>
 				<Route path="/catalog/category/:category_name" element={<CategoryPage list= {state.list}/>}/>
 				<Route path="/books/add" element={<AddBookForm addBook={addBook} />}/>
 				
@@ -327,7 +329,7 @@ function App() {
 			    <Route path="/" element={<MainPage/>}/>			
 				<Route path="/catalog" element={<Catalog list= {state.list}/>}/>
 				<Route path="/login" element={<LoginPage  register={register} login={login} list= {state.list}/>}/>
-				
+				<Route path="/search/:searched" element={<SearchResult list= {state.list}/>}/>
 				<Route path="/catalog/:id" element={<BookPage list= {state.list}/>}/>
 				<Route path="/catalog/category/:category_name" element={<CategoryPage list= {state.list}/>}/>
 				

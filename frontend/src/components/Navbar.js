@@ -1,13 +1,17 @@
 import {Link} from 'react-router-dom';
 import { Nav, Navbar, FormControl, Container, Form, Button } from 'react-bootstrap';
 import logo from '../img/0acd5002683fbcf2b720004f201ee530--library-logo-library-design.jpg';
-import { BrowserRouter as Router, Switch, Route} from "react-router-dom";
-import AddBookForm from './addBookForm';
-import MainPage from './mainPage';
+import {useState,useEffect} from 'react';
 
 
 const NavbarResponsive = (props) => {
-    console.log("Navbar receides props logout value", props.isLogged)
+    const [searched, setSearched] =useState('')
+    const onChange = (event) =>{
+        console.log("detect changes in search")
+        setSearched(event.target.value)
+    }
+
+
     if(props.isLogged) {	
 	return(
 		<div>
@@ -50,12 +54,19 @@ const NavbarResponsive = (props) => {
                     placeholder="Search"
                     className = "mr-md-2"
                     inlineblock = "true"
+                    onChange= {onChange}
+                    name="searched"
+                    id="searched"
                     />
                   
                   
                     </Form>
-                    <Button  
-                     variant = "outline-info" type= "submit"   style ={{marginLeft: '20px'}}>Search</Button>
+                    
+                     <Link to={`/search/${searched}`} className="btn btn-primary btn-oultine" style= {{borderRadius: "8px", marginLeft:"20px", fontSize:"14px"}}>
+                     Search
+                        
+                        
+                        </Link>
                     
                 </Navbar.Collapse>
 
@@ -111,12 +122,18 @@ const NavbarResponsive = (props) => {
                 placeholder="Search"
                 className = "mr-md-2"
                 inlineblock = "true"
+                onChange= {onChange}
+                    name="searched"
+                    id="searched"
                 />
               
               
                 </Form>
-                <Button  
-                 variant = "outline-info" type= "submit"   style ={{marginLeft: '20px'}}>Search</Button>
+                <Link to={`/search/${searched}`} className="btn btn-primary" style= {{marginRight:"20px", fontSize:"12px"}}>
+                     Read more
+                        
+                        
+                        </Link>
                 
             </Navbar.Collapse>
 
