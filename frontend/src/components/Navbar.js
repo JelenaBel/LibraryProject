@@ -39,7 +39,7 @@ const NavbarResponsive = (props) => {
                     <Nav.Link style={{whiteSpace:"nowrap"}} href ="/books/add">Add Book</Nav.Link>
 					<Nav.Link style={{whiteSpace:"nowrap"}} href ="/">Contacts</Nav.Link>
 					<Nav.Link style={{whiteSpace:"nowrap"}} href ="/">About us</Nav.Link>
-                    <Nav.Link style={{whiteSpace:"nowrap"}} href ="/">{props.user}</Nav.Link>
+                    <Nav.Link style={{whiteSpace:"nowrap"}} href ="/userorders">{props.user}</Nav.Link>
                     <Nav.Link style={{whiteSpace:"nowrap"}}><Link style={{color:"grey", textDecoration:"none", whiteSpace:"nowrap"}} href ="/" onClick={props.logout}>Logout</Link></Nav.Link>
 
 
@@ -129,8 +129,8 @@ const NavbarResponsive = (props) => {
               
               
                 </Form>
-                <Link to={`/search/${searched}`} className="btn btn-primary" style= {{marginRight:"20px", fontSize:"12px"}}>
-                     Read more
+                <Link to={`/search/${searched}`} className="btn btn-primary" style= {{borderRadius: "8px", marginLeft:"20px", fontSize:"14px"}}>
+                     Search
                         
                         
                         </Link>

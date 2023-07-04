@@ -3,9 +3,10 @@ const mongoose = require("mongoose");
 const libraryCatalogRoute = require("./routes/librarycatalogroute");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const userModel = require("./models/user");
+const userModel = require("./models/User");
 const sessionModel = require("./models/session");
 const adminRoutes = require("./routes/adminRoutes");
+const customerRoutes = require("./routes/Customerroute");
 
 
 let app = express();
@@ -19,7 +20,7 @@ const mongo_password = process.env.MONGODB_PASSWORD;
 
 let port = process.env.PORT || 3001
 
-const url= "mongodb+srv://elenabelousova:hffShKmLCftHDJxz@cluster0.ii50rup.mongodb.net/librarydatabase?retryWrites=true&w=majority"
+
 
 
 mongoose.connect(url).then(
@@ -86,7 +87,9 @@ app.post("/register",function(req,res) {
 		}
 		let user = new userModel({
 			"username":req.body.username,
-			"password":hash
+			"password":hash,
+			"librarycard": "",
+			"email":""
 		})
 		user.save().then(function(user) {
 			return res.status(200).json({"Message":"Register success"});
@@ -158,7 +161,8 @@ app.post("/logout",function(req,res) {
 
 app.use("/api", libraryCatalogRoute);
 app.use("/api_admin", isUserLogged, adminRoutes);
-//app.use("/api-private", isUserLogged, customerReservationRoute);
+app.use("/api_customer", isUserLogged, customerRoutes);
+//app.use("/api-private", isUserLogged, customerRoute);
 
 
 app.listen(3001);

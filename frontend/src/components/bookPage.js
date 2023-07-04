@@ -40,7 +40,7 @@ const BookPage = (props) =>{
     <p className="card-text">{book.library_code}</p>
     <div className="d-flex flex-row bd-highlight">
     <Link to={`/catalog/wishlist/${book._id}`} className="btn btn-secondary"style= {{marginRight:"20px", fontSize:"12px"}} >Wishlist</Link>
-    <Link to={`/catalog/reserve/${book._id}`} className="btn btn-secondary"style= {{marginRight:"20px", fontSize:"12px"}} >Reserve</Link>
+    <button className="btn btn-secondary" onClick ={()=>props.orderBook(props.book._id)} style= {{marginRight:"20px", width: "auto", fontSize:"12px"}} >Order</button>
     
     
     </div>

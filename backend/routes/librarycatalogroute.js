@@ -6,6 +6,7 @@ let router = express.Router();
 
 
 router.get("/catalog", function (req, res){
+   
     bookModel.find().then(function(books){
         return res.status(200).json(books);
 

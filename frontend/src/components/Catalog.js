@@ -8,7 +8,7 @@ const Catalog = (props) =>{
 		
 		return(
             <div>
-			<Book key={book._id} book={book} index={index}/>
+			<Book key={book._id} book={book} index={index} orderBook={props.orderBook}/>
             
             </div>
 
@@ -16,7 +16,7 @@ const Catalog = (props) =>{
 	})
 
     return(
-        <div className = "container">
+        <div className = "container-sm">
         <div className="d-flex">
             <div className="d-inline-flex">
 
@@ -28,9 +28,7 @@ const Catalog = (props) =>{
 			{books}
             </div>
             </div>
-		 
-
-        </div>
+		         </div>
         </div>
 
     )

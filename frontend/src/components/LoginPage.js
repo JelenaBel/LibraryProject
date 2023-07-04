@@ -4,6 +4,8 @@ const LoginPage = (props) => {
 	
 	const [state,setState] = useState({
 		username:"",
+		email:"",
+		librarycard:"",
 		password:""
 	})
 	const[messageLogin, setMessageLogin] = useState({
@@ -66,6 +68,8 @@ const LoginPage = (props) => {
 						className="form-control"
 						onChange={onChange}
 						value={state.password}/>
+				
+						<br></br>
 						<br></br>
 						
 				<button name="register" onClick={onSubmit} style={{marginRight:5}} className="btn btn-secondary">Register</button>

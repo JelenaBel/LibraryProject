@@ -10,6 +10,7 @@ import BookPage from './components/bookPage';
 import CategoryPage from './components/CategoryPage';
 import LoginPage from './components/LoginPage';
 import SearchResult from './components/SearchResult';
+import CustomerPage from './components/CustomerPage';
 
 
 
@@ -22,7 +23,11 @@ function App() {
 		token:"",
 		loading:false,
 		error:"",
-		user:""
+		user:"",
+		userInfo:{},
+		orders: []
+		
+		
 	})
 	
 	const [urlRequest,setUrlRequest] = useState({
@@ -30,6 +35,8 @@ function App() {
 		request:{},
 		action:""
 	})
+
+	
 
 	
 	
@@ -40,7 +47,8 @@ function App() {
 			let state = JSON.parse(sessionStorage.getItem("state"));
 			setState(state);
 			if(state.isLogged) {
-				getBooks(state.token);
+				getBooks();
+								
 			}
 		}
 	},[])
@@ -93,6 +101,8 @@ function App() {
 	useEffect(() => {
 		
 				getBooks();
+			
+						
 							
 		}, [])
 		
@@ -135,6 +145,52 @@ function App() {
 							return tempState;
 						})
 						return;
+
+					case "getuser":
+						const datauser = await response.json();
+						if(!datauser) {
+							setError("Failed to parse user information. Try again later.");
+							return;
+						}
+						
+						let new_userInfo= 
+						       {"userid":datauser._id,
+								"username":datauser.username,
+								"password":datauser.password,
+								"email":datauser.email,
+								"librarycard":datauser.librarycard,
+									
+								}
+						setState((state) => {
+							let tempState = {
+								...state,
+								userInfo: new_userInfo
+								
+							}
+							saveToStorage(tempState);
+							
+							return new_userInfo;
+						})
+						return;
+
+					case "getuserorders":
+						const datauserorders = await response.json();
+						if(!datauserorders) {
+							setError("Failed to parse userorder information. Try again later.");
+							return;
+						}
+						
+						setState((state) => {
+							let tempState = {
+								...state,
+								orders: datauserorders
+							}
+							saveToStorage(tempState);
+							return tempState;
+						})
+						return;
+
+					case"orderbook":
 					case "addbook":
 						getBooks();
 						return;
@@ -152,12 +208,12 @@ function App() {
 								...state,
 								isLogged:true,
 								token:loginData.token
-							
 							}
 							saveToStorage(tempState);
 							return tempState;
 						})
 						getBooks(loginData.token);
+						
 						return;
 					case "logout":
 						console.log("Case Logout")
@@ -192,6 +248,12 @@ function App() {
 					case "getbooks":
 						setError("Failed to fetch shopping information."+errorMessage);
 						return;
+					case "getuser":
+						setError("Failed to fetch user information."+errorMessage);
+						return;
+					case "getuserorders":
+						setError("Failed to fetch user orders information."+errorMessage);
+						return;
 					case "addbook":
 						setError("Failed to add new item."+errorMessage);
 						return;
@@ -224,8 +286,52 @@ function App() {
 		})
 	}
 
+	const orderBook = (id) => {
+		setUrlRequest({
+			url:"/api_customer/order/"+id,
+			request:{
+				"method":"POST",
+				"headers":{
+					"Content-Type":"application/json",
+					"token":state.token
+				},
+				
+			},
+			action:"orderbook"
+		})
+	}	
+
+	const getUser = () => {
+		setUrlRequest({
+			url:"/api_customer/userinfo",
+			request:{
+				"method":"GET",
+				"headers":{
+					
+					"token":state.token
+				},
+				
+			},
+			action:"getuser"
+		})
+	}	
+	const getUserOrders = () => {
+		setUrlRequest({
+			url:"/api_customer/userorders",
+			request:{
+				"method":"GET",
+				"headers":{
+					
+					"token":state.token
+				},
+				
+			},
+			action:"getuserorders"
+		})
 		
-	
+	}	
+
+
 	const addBook = (book) => {
 		setUrlRequest({
 			url:"/api_admin/books/add",
@@ -301,15 +407,17 @@ function App() {
 	if(state.isLogged) {
 	return (
 		<div className="App">
-			<NavbarResponsive logout={logout} isLogged={state.isLogged} user={state.user}/>
+			<NavbarResponsive logout={logout} isLogged={state.isLogged} user={state.user}  />
 			<div style={{height:25, textAlign:"center"}}>
 					{message}
 				</div>
 			<Routes>
 			    <Route path="/" element={<MainPage/>}/>			
-				<Route path="/catalog" element={<Catalog list= {state.list}/>}/>
+				<Route path="/catalog" element={<Catalog list= {state.list} orderBook= {orderBook}/>}/>
 				<Route path="/login" element={<LoginPage  register={register} login={login} list= {state.list}/>}/>
-				<Route path="/catalog/:id" element={<BookPage list= {state.list}/>}/>
+				<Route path="/userorders" element={<CustomerPage  getUser={getUser} getUserOrders= {getUserOrders} 
+				userInfo={state.userInfo} orders={state.orders} list={state.list}/>}/>
+				<Route path="/catalog/:id" element={<BookPage list= {state.list} orderBook= {orderBook}/>}/>
 				<Route path="/search/:searched" element={<SearchResult list= {state.list}/>}/>
 				<Route path="/catalog/category/:category_name" element={<CategoryPage list= {state.list}/>}/>
 				<Route path="/books/add" element={<AddBookForm addBook={addBook} />}/>
@@ -327,11 +435,11 @@ function App() {
 				</div>
 			<Routes>
 			    <Route path="/" element={<MainPage/>}/>			
-				<Route path="/catalog" element={<Catalog list= {state.list}/>}/>
+				<Route path="/catalog" element={<Catalog list= {state.list} orderBook= {orderBook}/>}/>
 				<Route path="/login" element={<LoginPage  register={register} login={login} list= {state.list}/>}/>
-				<Route path="/search/:searched" element={<SearchResult list= {state.list}/>}/>
-				<Route path="/catalog/:id" element={<BookPage list= {state.list}/>}/>
-				<Route path="/catalog/category/:category_name" element={<CategoryPage list= {state.list}/>}/>
+				<Route path="/search/:searched" element={<SearchResult list= {state.list} orderBook= {orderBook}/>}/>
+				<Route path="/catalog/:id" element={<BookPage list= {state.list} orderBook= {orderBook}/>}/>
+				<Route path="/catalog/category/:category_name" element={<CategoryPage list= {state.list} orderBook= {orderBook}/>}/>
 				
 				
 			</Routes>
