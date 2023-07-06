@@ -6,7 +6,7 @@ const crypto = require("crypto");
 const userModel = require("./models/User");
 const sessionModel = require("./models/session");
 const adminRoutes = require("./routes/adminRoutes");
-const customerRoutes = require("./routes/Customerroute");
+const customerRoutes = require("./routes/customerRoute");
 
 
 let app = express();
@@ -68,6 +68,7 @@ isUserLogged = (req,res,next) => {
 	});
 }
 
+
 //LOGIN API
 
 app.post("/register",function(req,res) {
@@ -89,7 +90,8 @@ app.post("/register",function(req,res) {
 			"username":req.body.username,
 			"password":hash,
 			"librarycard": "",
-			"email":""
+			"email":"",
+			"status":"admin"
 		})
 		user.save().then(function(user) {
 			return res.status(200).json({"Message":"Register success"});

@@ -36,12 +36,12 @@ const NavbarResponsive = (props) => {
                 <Nav className ="me-auto my-2 my-lg-0">
                     <Nav.Link style={{whiteSpace:"nowrap"}} href ="/">Main</Nav.Link>
                     <Nav.Link style={{whiteSpace:"nowrap"}} href ="/catalog">Catalog</Nav.Link>
-                    <Nav.Link style={{whiteSpace:"nowrap"}} href ="/books/add">Add Book</Nav.Link>
+                    
 					<Nav.Link style={{whiteSpace:"nowrap"}} href ="/">Contacts</Nav.Link>
 					<Nav.Link style={{whiteSpace:"nowrap"}} href ="/">About us</Nav.Link>
                     <Nav.Link style={{whiteSpace:"nowrap"}} href ="/userorders">{props.user}</Nav.Link>
                     <Nav.Link style={{whiteSpace:"nowrap"}}><Link style={{color:"grey", textDecoration:"none", whiteSpace:"nowrap"}} href ="/" onClick={props.logout}>Logout</Link></Nav.Link>
-
+                    <Nav.Link className="btn btn-secondary"style={{ marginLeft:"20px", marginRight:"20px", whiteSpace:"nowrap"}} href ="/adminpage">Admin part</Nav.Link>
 
 
                 </Nav>

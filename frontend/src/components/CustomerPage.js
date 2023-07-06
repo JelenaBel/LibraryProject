@@ -1,4 +1,6 @@
 import {useState, useEffect} from 'react';
+
+import {Link} from 'react-router-dom';
 import UserInfo from './UserInfo';
 
 const CustomerPage = (props) =>{
@@ -10,15 +12,18 @@ useEffect(() => {
             
 }, [])
 
+
 var orders= props.orders.map((order, index) =>{
     const book = props.list.find(book =>book._id ===order.book_id)
     const date= order.order_date.split("T")[0]
+    const pickup_date= order.pickup_date.split("T")[0]
+    const due_date= order.due_date.split("T")[0]
     return(
         <tr key={index}>  
                 <td>{book.title} </td>
                 <td>{date} </td>
-                <td>{order.pickup_date} </td>
-                <td>{order.due_date} </td>
+                <td>{pickup_date} </td>
+                <td>{due_date} </td>
                 <td>{order.picked} </td>
                 <td>{order.returned} </td>
             </tr>
@@ -36,7 +41,8 @@ var orders= props.orders.map((order, index) =>{
              <br></br>
             <br></br>
             
-             <UserInfo  getUser= {props.getUser}userInfo={props.userInfo}/>
+             <h3>Hi {props.user}</h3>
+             <Link to={`/userinfo`} className="btn btn-primary btn-oultine" style= {{borderRadius: "8px", marginLeft:"20px", fontSize:"14px"}}> User Profile</Link>
            
 
             <br></br>
@@ -50,9 +56,9 @@ var orders= props.orders.map((order, index) =>{
             <table className="table table-striped table-hover table-responsive">
                 
                 <tr>
-                    <th scope="col">Book id</th>
+                    <th scope="col">Book title</th>
                     <th scope="col">Order date</th>
-                    <th scope="col">Pickip date</th>
+                    <th scope="col">Pickip until</th>
                     <th scope="col">Due date</th>
                     <th scope="col">Picked</th>
                     <th scope="col">Returned</th>

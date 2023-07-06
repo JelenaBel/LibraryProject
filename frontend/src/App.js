@@ -11,6 +11,12 @@ import CategoryPage from './components/CategoryPage';
 import LoginPage from './components/LoginPage';
 import SearchResult from './components/SearchResult';
 import CustomerPage from './components/CustomerPage';
+import UserInfo from './components/UserInfo';
+import EditUserInfo from './components/EditUserInfo';
+import AdminPage from './components/adminpage';
+import AdminBooks from './components/AdminBooks';
+import AdminUsers from './components/AdminUsers';
+import AdminOrders from './components/AdminOrders';
 
 
 
@@ -25,8 +31,10 @@ function App() {
 		error:"",
 		user:"",
 		userInfo:{},
-		orders: []
-		
+		orders: [],
+		usersAdmin:[],
+		ordersAdmin:[]
+			
 		
 	})
 	
@@ -48,7 +56,7 @@ function App() {
 			setState(state);
 			if(state.isLogged) {
 				getBooks();
-								
+												
 			}
 		}
 	},[])
@@ -87,7 +95,12 @@ function App() {
 			loading:true,
 			token:"",
 			error:error,
-			user:""
+			user:"",
+			userInfo:{},
+			orders:[],
+			usersAdmin:[],
+			ordersAdmin:[]
+
 		}
 		saveToStorage(changedState);
 		setState(changedState);
@@ -153,23 +166,16 @@ function App() {
 							return;
 						}
 						
-						let new_userInfo= 
-						       {"userid":datauser._id,
-								"username":datauser.username,
-								"password":datauser.password,
-								"email":datauser.email,
-								"librarycard":datauser.librarycard,
-									
-								}
 						setState((state) => {
 							let tempState = {
 								...state,
-								userInfo: new_userInfo
+								userInfo: datauser
 								
 							}
+							console.log(datauser)
 							saveToStorage(tempState);
 							
-							return new_userInfo;
+							return tempState;
 						})
 						return;
 
@@ -189,9 +195,42 @@ function App() {
 							return tempState;
 						})
 						return;
-
+					case "getusersadmin":
+							const datausers = await response.json();
+							if(!datausers) {
+								setError("Failed to parse users admin information. Try again later.");
+								return;
+							}
+							console.log("users admin", datausers)
+							setState((state) => {
+								let tempState = {
+									...state,
+									usersAdmin:datausers
+								}
+								saveToStorage(tempState);
+								return tempState;
+							})
+							return;
+						case "getordersadmin":
+								const dataordersadmin = await response.json();
+								if(!dataordersadmin) {
+									setError("Failed to parse users admin information. Try again later.");
+									return;
+								}
+								console.log("orders admin", dataordersadmin)
+								setState((state) => {
+									let tempState = {
+										...state,
+										ordersAdmin:dataordersadmin
+										
+									}
+									saveToStorage(tempState);
+									return tempState;
+								})
+								return;
 					case"orderbook":
 					case "addbook":
+					case editUser:	
 						getBooks();
 						return;
 					case "register":
@@ -251,6 +290,9 @@ function App() {
 					case "getuser":
 						setError("Failed to fetch user information."+errorMessage);
 						return;
+					case "edituser":
+						setError("Failed to edit user info."+errorMessage);
+						return;
 					case "getuserorders":
 						setError("Failed to fetch user orders information."+errorMessage);
 						return;
@@ -303,7 +345,7 @@ function App() {
 
 	const getUser = () => {
 		setUrlRequest({
-			url:"/api_customer/userinfo",
+			url:"/api_customer/getuserinfo",
 			request:{
 				"method":"GET",
 				"headers":{
@@ -315,6 +357,22 @@ function App() {
 			action:"getuser"
 		})
 	}	
+    
+	const editUser = (user) => {
+		setUrlRequest({
+			url:"/api_customer/edituser/",
+			request:{
+				"method":"PUT",
+				"headers":{
+					"Content-Type":"application/json",
+					"token":state.token
+				},
+				"body":JSON.stringify(user)
+			},
+			action:"edituser"
+		})
+	}
+
 	const getUserOrders = () => {
 		setUrlRequest({
 			url:"/api_customer/userorders",
@@ -330,6 +388,33 @@ function App() {
 		})
 		
 	}	
+	const getUsersAdmin = () => {
+		
+		setUrlRequest({
+			url:"/api_admin/admin/users",
+			request:{
+				"method":"GET",
+				"headers":{
+					"token":state.token
+				}
+			},
+			action:"getusersadmin"			
+		})
+	}
+
+	const getOrdersAdmin = () => {
+		
+		setUrlRequest({
+			url:"/api_admin/admin/orders",
+			request:{
+				"method":"GET",
+				"headers":{
+					"token":state.token
+				}
+			},
+			action:"getordersadmin"			
+		})
+	}
 
 
 	const addBook = (book) => {
@@ -396,11 +481,13 @@ function App() {
 			action:"logout"
 		})
 	}
-	let message =<h4></h4>
+	let message =<div></div>
 
 	if(state.error) {
 		message = <h4>{state.error}</h4>
 	}
+	
+	
 		
 	
 	
@@ -414,14 +501,19 @@ function App() {
 			<Routes>
 			    <Route path="/" element={<MainPage/>}/>			
 				<Route path="/catalog" element={<Catalog list= {state.list} orderBook= {orderBook}/>}/>
-				<Route path="/login" element={<LoginPage  register={register} login={login} list= {state.list}/>}/>
+				<Route path="/login" element={<LoginPage  register={register} login={login} list= {state.list} setError={setError}/>}/>
 				<Route path="/userorders" element={<CustomerPage  getUser={getUser} getUserOrders= {getUserOrders} 
-				userInfo={state.userInfo} orders={state.orders} list={state.list}/>}/>
+				userInfo={state.userInfo} orders={state.orders} list={state.list} user={state.user} />}/>
+				<Route path="/userinfo" element={<UserInfo list= {state.list} getUser= {getUser} userInfo={state.userInfo} setError={setError}/>}/>
+				<Route path="/edituserinfo" element={<EditUserInfo userInfo={state.userInfo} editUser={editUser}/>}/>
 				<Route path="/catalog/:id" element={<BookPage list= {state.list} orderBook= {orderBook}/>}/>
 				<Route path="/search/:searched" element={<SearchResult list= {state.list}/>}/>
 				<Route path="/catalog/category/:category_name" element={<CategoryPage list= {state.list}/>}/>
+				<Route path="/adminpage" element={<AdminPage list= {state.list} />}/>
 				<Route path="/books/add" element={<AddBookForm addBook={addBook} />}/>
-				
+				<Route path="/admin/books" element={<AdminBooks list= {state.list} getBooks= {getBooks}/>}/>
+				<Route path="/admin/users" element={<AdminUsers  getUsersAdmin= {getUsersAdmin} usersAdmin= {state.usersAdmin} />}/>
+				<Route path="/admin/orders" element={<AdminOrders  getOrdersAdmin= {getOrdersAdmin} list= {state.list}  ordersAdmin= {state.ordersAdmin} />}/>
 			</Routes>
 			<FooterResponsive/>
 		</div>
@@ -436,7 +528,7 @@ function App() {
 			<Routes>
 			    <Route path="/" element={<MainPage/>}/>			
 				<Route path="/catalog" element={<Catalog list= {state.list} orderBook= {orderBook}/>}/>
-				<Route path="/login" element={<LoginPage  register={register} login={login} list= {state.list}/>}/>
+				<Route path="/login" element={<LoginPage  register={register} login={login} list= {state.list} setError={setError}/>}/>
 				<Route path="/search/:searched" element={<SearchResult list= {state.list} orderBook= {orderBook}/>}/>
 				<Route path="/catalog/:id" element={<BookPage list= {state.list} orderBook= {orderBook}/>}/>
 				<Route path="/catalog/category/:category_name" element={<CategoryPage list= {state.list} orderBook= {orderBook}/>}/>

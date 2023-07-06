@@ -2,6 +2,8 @@ const express = require("express");
 const bookModel = require("../models/Book");
 const orderModel = require("../models/Order");
 const userModel= require("../models/User");
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
 let router = express.Router();
 
@@ -120,11 +122,70 @@ router.get("/getuserinfo", function (req, res){
     
 })
 
+router.put("/edituser/", function (req, res){
+    const username =req.session.user
+    if(!req.body) {
+		return res.status(400).json({"Message":"Bad Request"})
+	}
+	if(!req.body.username) {
+		return res.status(400).json({"Message":"Bad Request"})
+	}
+    if(!req.body.password) {
+		return res.status(400).json({"Message":"Bad Request"})
+	}
+    if(req.body.username.length < 4) {
+		return res.status(400).json({"Message":"Bad Request"});
+	}
+	if(req.body.password.length < 8) {
+		return res.status(400).json({"Message":"Bad Request"});
+	}
+
+    let password=req.body.password
+    console.log("Password to change", password, "lenth", password.length)
+    
+
+	bcrypt.hash(req.body.password,14,function(err,hash) {
+		if(err) {
+			console.log(err);
+			return res.status(500).json({"Message":"Internal server error"});
+		}
+    
+    let new_password=""
+    if(password.length >=60){
+        new_password= password
+        console.log("New password hashed", new_password, "lenth", new_password.length)
+    }
+    else {
+        new_password = hash
+    }
+    
+	let user = {
+		"username":req.body.username,
+		"password":new_password,
+		"email":req.body.email,
+		"librarycard":req.body.librarycard,
+        "status":req.body.status
+	}
+	userModel.replaceOne({"username":username},user).then(function() {
+		return res.status(200).json({"Message":"Success"});
+	}).catch(function(err) {
+        if(err.code === 11000) {
+            return res.status(409).json({"Message":"Username is already in use"});
+        }
+        console.log(err);
+        return res.status(500).json({"Message":"Internal server error"});
+    });
+})
+})
+
+
+
+
 router.get("/userorders", function (req, res){
     const customer_name = req.session.user
     
     orderModel.find({"userid": req.session.user}). then (function(orders){
-        
+        console.log(orders)
         return res.status(200).json(orders);
 
     }). catch(function(err){
