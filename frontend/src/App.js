@@ -33,7 +33,8 @@ function App() {
 		userInfo:{},
 		orders: [],
 		usersAdmin:[],
-		ordersAdmin:[]
+		ordersAdmin:[],
+		userStatus:"user"
 			
 		
 	})
@@ -246,7 +247,9 @@ function App() {
 							let tempState = {
 								...state,
 								isLogged:true,
-								token:loginData.token
+								token:loginData.token,
+								userStatus:loginData.user_status
+
 							}
 							saveToStorage(tempState);
 							return tempState;
@@ -494,7 +497,7 @@ function App() {
 	if(state.isLogged) {
 	return (
 		<div className="App">
-			<NavbarResponsive logout={logout} isLogged={state.isLogged} user={state.user}  />
+			<NavbarResponsive logout={logout} isLogged={state.isLogged} user={state.user} userStatus={state.userStatus}  />
 			<div style={{height:25, textAlign:"center"}}>
 					{message}
 				</div>

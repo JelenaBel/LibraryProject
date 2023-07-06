@@ -22,7 +22,6 @@ let port = process.env.PORT || 3001
 
 
 
-
 mongoose.connect(url).then(
 	() => console.log("Connected to MongoDB"),
 	(error) => console.log("Failed to connect to MongoDB. Reason",error)
@@ -68,6 +67,48 @@ isUserLogged = (req,res,next) => {
 	});
 }
 
+isAdminLogged = (req,res,next) => {
+	console.log("IsAdminLogged Call");
+	if(!req.headers.token) {
+		return res.status(403).json({"Message":"Forbidden"});
+	}
+	sessionModel.findOne({"token":req.headers.token}).then(function(session) {
+		if(!session) {
+			return res.status(403).json({"Message":"Forbidden"});
+		}
+		let now = Date.now();
+		if(now > session.ttl) {
+			sessionModel.deleteOne({"_id":session._id}).then(function() {
+				return res.status(403).json({"Message":"Forbidden"});
+			}).catch(function(err) {
+				console.log(err);
+				return res.status(403).json({"Message":"Forbidden"});
+			})
+		} else {
+			session.ttl = now + time_to_live_diff;
+			req.session = {};
+			req.session.user = session.user;
+			userModel.findOne({"username":session.user}).then(function(user) {
+				console.log("User status", user.status)
+				if(user.status!="admin") {
+					return res.status(403).json({"Message":"Forbidden"});
+				}
+			session.save().then(function() {
+				return next();
+			}).catch(function(err) {
+				console.log(err);
+				return next();
+			})
+			}).catch(function(err) {
+				console.log(err);
+				return next();
+			})
+		}
+	}).catch(function(err) {
+		console.log(err);
+		return res.status(403).json({"Message":"Forbidden"});
+	});
+}
 
 //LOGIN API
 
@@ -91,7 +132,7 @@ app.post("/register",function(req,res) {
 			"password":hash,
 			"librarycard": "",
 			"email":"",
-			"status":"admin"
+			"status":"user"
 		})
 		user.save().then(function(user) {
 			return res.status(200).json({"Message":"Register success"});
@@ -119,6 +160,7 @@ app.post("/login",function(req,res) {
 		if(!user) {
 			return res.status(401).json({"Message":"Unauthorized"});
 		}
+		let user_status=user.status
 		bcrypt.compare(req.body.password,user.password,function(err,success) {
 			if(err) {
 				console.log(err);
@@ -135,7 +177,7 @@ app.post("/login",function(req,res) {
 				"token":token
 			})
 			session.save().then(function(session) {
-				return res.status(200).json({"token":token})
+				return res.status(200).json({"token":token, "user_status": user_status})
 			}).catch(function(err) {
 				console.log(err);
 				return res.status(500).json({"Message":"Internal Server Error"});
@@ -162,7 +204,7 @@ app.post("/logout",function(req,res) {
 
 
 app.use("/api", libraryCatalogRoute);
-app.use("/api_admin", isUserLogged, adminRoutes);
+app.use("/api_admin", isAdminLogged, adminRoutes);
 app.use("/api_customer", isUserLogged, customerRoutes);
 //app.use("/api-private", isUserLogged, customerRoute);
 

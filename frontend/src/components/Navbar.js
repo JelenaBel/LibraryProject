@@ -10,7 +10,13 @@ const NavbarResponsive = (props) => {
         console.log("detect changes in search")
         setSearched(event.target.value)
     }
+    let admin_part= ""
+    if(props.userStatus==="admin"){
+        admin_part = <Nav.Link className="btn btn-secondary"style={{ marginLeft:"20px", marginRight:"20px", whiteSpace:"nowrap"}} href ="/adminpage">Admin part</Nav.Link>
 
+        
+        
+    }
 
     if(props.isLogged) {	
 	return(
@@ -41,7 +47,7 @@ const NavbarResponsive = (props) => {
 					<Nav.Link style={{whiteSpace:"nowrap"}} href ="/">About us</Nav.Link>
                     <Nav.Link style={{whiteSpace:"nowrap"}} href ="/userorders">{props.user}</Nav.Link>
                     <Nav.Link style={{whiteSpace:"nowrap"}}><Link style={{color:"grey", textDecoration:"none", whiteSpace:"nowrap"}} href ="/" onClick={props.logout}>Logout</Link></Nav.Link>
-                    <Nav.Link className="btn btn-secondary"style={{ marginLeft:"20px", marginRight:"20px", whiteSpace:"nowrap"}} href ="/adminpage">Admin part</Nav.Link>
+                    {admin_part}
 
 
                 </Nav>
