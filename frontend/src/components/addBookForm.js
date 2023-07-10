@@ -1,7 +1,9 @@
 import {useState} from 'react';
+import UploadWidget from './UploadWidget';
+
 
 const AddBookForm = (props) => {
-	
+		
 	const [state,setState] = useState({
 
 		title:'',
@@ -50,11 +52,13 @@ const AddBookForm = (props) => {
 			"width":"100%",
 			"textAlign":"center"
 		}}>
+			
 			<div className = "container col-xxl-8 px-4 py-5">
 				<br></br>
 				<h2>Add New Book</h2>
 				<br></br>
 				<br></br>
+				
 			<form className="p-4 p-md-5 border rounded-3 bg-light" onSubmit={onSubmit}>
 				<label htmlFor="title" className="form-label">Book title:</label>
 				<input type="text"
@@ -63,6 +67,8 @@ const AddBookForm = (props) => {
 						id="title"
 						onChange={onChange}
 						value={state.title}/>
+
+           
 				
 				<label htmlFor="author" className="form-label">Book author:</label>
 				<input type="text"
@@ -130,6 +136,7 @@ const AddBookForm = (props) => {
 						onChange={onChange}
 						value={state.library_code}/>
 
+               
 				<br></br>
 				<input type="submit" className="btn btn-primary" value="Add"/>
 			</form>

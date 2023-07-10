@@ -21,7 +21,6 @@ const mongo_password = process.env.MONGODB_PASSWORD;
 let port = process.env.PORT || 3001
 
 
-
 mongoose.connect(url).then(
 	() => console.log("Connected to MongoDB"),
 	(error) => console.log("Failed to connect to MongoDB. Reason",error)

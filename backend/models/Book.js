@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 let Schema = mongoose.Schema({
 	title:{type:String, index:true},
     author: String,
+    image: {type:Object},
     published: Number,
     number_pages: Number,
     language: String,
